@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>chartgrab demo</title>
+<style>
+  body { background:#0b1220; color:#cbd5e1; font:12px system-ui, sans-serif; margin:0; }
+  #wrap { position:absolute; left:80px; top:60px; }
+  h3 { position:absolute; left:80px; top:20px; margin:0; font-size:14px; }
+  .lab { position:absolute; white-space:nowrap; }
+  canvas { position:absolute; left:0; top:0; }
+</style></head>
+<body>
+<h3>Net Gamma Exposure By Strike - DEMO</h3>
+<div id="wrap"></div>
+<script>
+// A canvas bar chart with HTML tick labels, like many web dashboards.
+const W = 640, H = 360, dpr = window.devicePixelRatio || 1;
+const strikes = [], values = {};
+const vals = [8, -12, 25, 60, -40, 100, 35, 0, -18, 72, 15, 44];   // millions
+vals.forEach((v, i) => { const k = 170 + 5 * i; strikes.push(k); values[k] = v * 1e6; });
+const yMax = 125e6, yMin = -75e6, plotTop = 20, plotBottom = H - 30, left = 30, right = W - 10;
+const yPix = v => plotTop + (yMax - v) / (yMax - yMin) * (plotBottom - plotTop);
+const xPix = k => left + (k - 165) / 65 * (right - left);
+const wrap = document.getElementById('wrap');
+const c = document.createElement('canvas');
+c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px';
+wrap.appendChild(c);
+const g = c.getContext('2d'); g.scale(dpr, dpr);
+g.fillStyle = '#111827'; g.fillRect(0, 0, W, H);
+g.strokeStyle = '#374151';
+for (let v = yMin; v <= yMax; v += 25e6) { g.beginPath(); g.moveTo(left, yPix(v)); g.lineTo(right, yPix(v)); g.stroke(); }
+for (const k of strikes) {
+  const v = values[k]; if (!v) continue;
+  g.fillStyle = v > 0 ? '#22c55e' : '#ef4444';
+  const y0 = yPix(0), y1 = yPix(v);
+  g.fillRect(xPix(k) - 8, Math.min(y0, y1), 16, Math.abs(y1 - y0));
+}
+function label(text, x, y, align) {
+  const d = document.createElement('div'); d.className = 'lab'; d.textContent = text; wrap.appendChild(d);
+  const r = d.getBoundingClientRect();
+  d.style.left = (align === 'right' ? x - r.width : x - r.width / 2) + 'px';
+  d.style.top = (y - r.height / 2) + 'px';
+}
+for (let v = -50e6; v <= 100e6; v += 50e6) label((v / 1e6) + 'M', -6, yPix(v), 'right');
+for (const k of [170, 190, 210, 225]) label('$' + k, xPix(k), H + 12, 'center');
+window.__demoValues = values; window.__demoReady = true;
+</script></body></html>
