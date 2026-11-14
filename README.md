@@ -1,17 +1,25 @@
 # chartgrab
 
-**Turn web charts into a programmable data source.**
+**Beyond screenshot recognition. Turn web charts into a programmable data source.**
 
-For dashboards without a suitable structured export, chartgrab extracts bar-chart data from browser Canvas elements or images. Recover horizontal positions, signed values and measurement-error estimates, then export **CSV or JSON** for your analysis pipeline.
+Extract vertical bar-chart data directly from browser Canvas pixels and visible page text. Recover horizontal positions, signed values and measurement-error estimates, then export **CSV or JSON**—locally, without per-bar hovering, a vendor data API or cloud vision calls.
 
-**让网页图表成为可计算的数据源。**
+## The breakthrough
 
-面向缺乏结构化导出接口的仪表盘，直接从浏览器 Canvas 或图表图片批量提取柱状数据，恢复横轴位置、正负数值与误差估计，输出 CSV／JSON。
+Screenshot/OCR and standalone OpenCV experiments had not completed the original project's dashboard-to-data workflow. **The breakthrough was changing the acquisition layer—not merely switching recognition algorithms:** read the chart where it is rendered, then calibrate and measure it in its own pixel coordinates.
 
-支持 Safari、Chrome 及 Python 集成，本地处理，无需逐柱悬停或云端视觉模型；原始快照可保存、复查和离线重算。
+chartgrab packages that approach into a reusable **browser → measurement → structured data** tool, with saved inputs for offline reprocessing.
+
+**关键突破：从“识别整屏截图”转向“直接读取图表画布”。**
+
+此前，截图识别、OCR 和 OpenCV 局部试验未能打通项目的取数链路。chartgrab 将浏览器原生采集、坐标标定、批量测量与结构化输出整合为可调用工具，让网页图表真正成为可计算的数据源。
+
+支持 Safari、Chrome、Python 及图表图片；本地处理，无需逐柱悬停或云端视觉模型，原始快照可保存、复查和离线重算。
 
 ```text
-Browser chart → Pixels + axis labels → Values ± error → Your analysis pipeline
+Browser Canvas + visible text → Calibrated bar measurements → CSV / JSON
+                  ↓
+             Saved snapshot → Offline reprocessing
 ```
 
 ## Features
@@ -49,6 +57,6 @@ Illustrative values; units follow the source chart.
 
 [Safari, Chrome & image usage](docs/GUIDE.md#capture-modes) · [Calibration & limits](docs/GUIDE.md#calibration-and-limits) · [中文指南](docs/GUIDE.md#中文说明)
 
-**v0.1 scope:** vertical bars and linear axes. Canvas-painted labels need explicit calibration or a separate OCR workflow. Cross-frame tracking belongs to the integrating application.
+**v0.1 scope:** vertical bars and linear axes. Canvas-painted labels need explicit calibration or a separate OCR workflow. Cross-frame tracking belongs to the integrating application. The breakthrough above describes the originating project's workflow, not a universal accuracy benchmark or a claim that other tools cannot implement it.
 
 [MIT License](LICENSE) · Use only data you are authorised to access and process.
